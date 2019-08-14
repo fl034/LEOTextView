@@ -71,9 +71,6 @@ extension LEOTextView: UITextViewDelegate {
             }
 
             paragraphStyle = mutableParargraphWithDefaultSetting()
-            paragraphStyle!.headIndent = 0
-            paragraphStyle!.firstLineHeadIndent = 0
-
         } else if paragraphType == .bulletedList || paragraphType == .dashedList || paragraphType == .numberedList {
             if currentParagraphStyle.firstLineHeadIndent != 0 {
                 return
@@ -82,9 +79,7 @@ extension LEOTextView: UITextViewDelegate {
             let objectLineAndIndex = LEOTextUtil.objectLineAndIndexWithString(self.text, location: selectedRange.location)
             let listPrefixString: NSString = NSString(string: objectLineAndIndex.0.components(separatedBy: " ")[0]).appending(" ") as NSString
 
-            paragraphStyle = mutableParargraphWithDefaultSetting()
-            paragraphStyle!.headIndent = normalFont.lineHeight + listPrefixString.size(withAttributes: [NSAttributedStringKey.font: normalFont]).width
-            paragraphStyle!.firstLineHeadIndent = normalFont.lineHeight
+            paragraphStyle = mutableParagraphForList(withBulletPointWidth: listPrefixString.size(withAttributes: [NSAttributedStringKey.font: normalFont]).width)
         }
 
         if paragraphStyle != nil {
