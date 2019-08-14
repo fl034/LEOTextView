@@ -30,8 +30,16 @@ extension LEOTextView: UITextViewDelegate {
             let type = currentParagraphType()
             if type == .title {
                 inputFontMode = .title
-            } else if type == .body {
-                inputFontMode = .normal
+            } else if textView.selectedRange.length == 0 {
+                // if we move the cursor, we want to set the right font
+                switch textView.font!.fontName {
+                case boldFont.fontName:
+                    inputFontMode = .bold
+                case italicFont.fontName:
+                    inputFontMode = .italic
+                default:
+                    inputFontMode = .normal
+                }                
             } else {
                 inputFontMode = .normal
             }
