@@ -120,6 +120,8 @@ open class LEOTextView: UITextView {
     open func changeSelectedTextWithInputFontMode(_ mode: LEOInputFontMode) {
         let currentMode = inputModeWithIndex(selectedRange.location)
         nck_textStorage.undoSupportChangeWithRange(selectedRange, toMode: mode.rawValue, currentMode: currentMode.rawValue)
+        // Apply new mode
+        inputFontMode = mode
     }
     
     /**
