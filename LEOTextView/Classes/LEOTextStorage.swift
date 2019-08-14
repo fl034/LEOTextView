@@ -38,9 +38,7 @@ class LEOTextStorage: NSTextStorage {
 
         // Unordered and Ordered list auto-complete support
         if LEOTextUtil.isReturn(str) {
-            if textView.inputFontMode == .title {
-                textView.inputFontMode = .normal
-            }
+            textView.inputFontMode = .normal
 
             let objectLineAndIndex = LEOTextUtil.objectLineAndIndexWithString(self.string, location: range.location)
             let objectLine = objectLineAndIndex.0
@@ -255,7 +253,7 @@ class LEOTextStorage: NSTextStorage {
             performReplacementsForRange(range, mode: LEOInputFontMode(rawValue: currentMode)!)
         } else {
             performReplacementsForRange(range, mode: LEOInputFontMode(rawValue: targetMode)!)
-        }
+        }        
     }
 
     func undoSupportReplaceRange(_ replaceRange: NSRange, withAttributedString attributedStr: NSAttributedString, oldAttributedString: NSAttributedString, selectedRangeLocationMove: Int) {
