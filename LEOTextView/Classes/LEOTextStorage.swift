@@ -38,9 +38,7 @@ class LEOTextStorage: NSTextStorage {
 
         // Unordered and Ordered list auto-complete support
         if LEOTextUtil.isReturn(str) {
-            if textView.inputFontMode == .title {
-                textView.inputFontMode = .normal
-            }
+            textView.inputFontMode = .normal
 
             let objectLineAndIndex = LEOTextUtil.objectLineAndIndexWithString(self.string, location: range.location)
             let objectLine = objectLineAndIndex.0
@@ -255,7 +253,7 @@ class LEOTextStorage: NSTextStorage {
             performReplacementsForRange(range, mode: LEOInputFontMode(rawValue: currentMode)!)
         } else {
             performReplacementsForRange(range, mode: LEOInputFontMode(rawValue: targetMode)!)
-        }
+        }        
     }
 
     func undoSupportReplaceRange(_ replaceRange: NSRange, withAttributedString attributedStr: NSAttributedString, oldAttributedString: NSAttributedString, selectedRangeLocationMove: Int) {
@@ -307,14 +305,12 @@ class LEOTextStorage: NSTextStorage {
             self.undoSupportMadeIndenationRange(range, headIndent: headIndent)
         })
 
-        let paragraphStyle = textView.mutableParargraphWithDefaultSetting()
+        var paragraphStyle: NSMutableParagraphStyle!
 
         if textView.undoManager!.isUndoing {
-            paragraphStyle.headIndent = 0
-            paragraphStyle.firstLineHeadIndent = 0
+            paragraphStyle = textView.mutableParargraphWithDefaultSetting()
         } else {
-            paragraphStyle.headIndent = headIndent + textView.normalFont.lineHeight
-            paragraphStyle.firstLineHeadIndent = textView.normalFont.lineHeight
+            paragraphStyle = textView.mutableParagraphForList(withBulletPointWidth: headIndent)
         }
 
       safeAddAttributes([NSAttributedStringKey.paragraphStyle : paragraphStyle], range: range)
@@ -325,16 +321,18 @@ class LEOTextStorage: NSTextStorage {
             self.undoSupportResetIndenationRange(range, headIndent: headIndent)
         })
 
-        let paragraphStyle = textView.mutableParargraphWithDefaultSetting()
+        var paragraphStyle: NSMutableParagraphStyle!
 
         if textView.undoManager!.isUndoing {
-            paragraphStyle.headIndent = headIndent + textView.normalFont.lineHeight
-            paragraphStyle.firstLineHeadIndent = textView.normalFont.lineHeight
+            paragraphStyle = textView.mutableParagraphForList(withBulletPointWidth: headIndent)
         } else {
-            paragraphStyle.headIndent = 0
-            paragraphStyle.firstLineHeadIndent = 0
+            paragraphStyle = textView.mutableParargraphWithDefaultSetting()
         }
 
       safeAddAttributes([NSAttributedStringKey.paragraphStyle : paragraphStyle], range: range)
     }
+}
+
+extension NSParagraphStyle {
+    
 }

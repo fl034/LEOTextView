@@ -10,11 +10,16 @@ import UIKit
 
 var nck_changeText = false
 
+
 extension LEOTextView: UITextViewDelegate {
 
     public func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         nck_changeText = true
-
+        // Backspace handling
+        if text == "" {
+            nck_changeText = false
+        }
+        
         if nck_delegate != nil && nck_delegate!.responds(to: #selector(self.textView(_:shouldChangeTextIn:replacementText:))) {
             return nck_delegate!.textView!(textView, shouldChangeTextIn: range, replacementText: text)
         }
@@ -23,6 +28,7 @@ extension LEOTextView: UITextViewDelegate {
     }
 
     public func textViewDidChangeSelection(_ textView: UITextView) {
+        // Just judge when text not changed, only section move
         if nck_changeText {
             nck_changeText = false
         } else {
@@ -30,10 +36,16 @@ extension LEOTextView: UITextViewDelegate {
             let type = currentParagraphType()
             if type == .title {
                 inputFontMode = .title
-            } else if type == .body {
-                inputFontMode = .normal
             } else {
-                inputFontMode = .normal
+                // if we move the cursor or select a word, we want to set the right font
+                switch textView.font!.fontName {
+                case boldFont.fontName:
+                    inputFontMode = .bold
+                case italicFont.fontName:
+                    inputFontMode = .italic
+                default:
+                    inputFontMode = .normal
+                }
             }
         }
 
@@ -63,9 +75,6 @@ extension LEOTextView: UITextViewDelegate {
             }
 
             paragraphStyle = mutableParargraphWithDefaultSetting()
-            paragraphStyle!.headIndent = 0
-            paragraphStyle!.firstLineHeadIndent = 0
-
         } else if paragraphType == .bulletedList || paragraphType == .dashedList || paragraphType == .numberedList {
             if currentParagraphStyle.firstLineHeadIndent != 0 {
                 return
@@ -74,9 +83,7 @@ extension LEOTextView: UITextViewDelegate {
             let objectLineAndIndex = LEOTextUtil.objectLineAndIndexWithString(self.text, location: selectedRange.location)
             let listPrefixString: NSString = NSString(string: objectLineAndIndex.0.components(separatedBy: " ")[0]).appending(" ") as NSString
 
-            paragraphStyle = mutableParargraphWithDefaultSetting()
-            paragraphStyle!.headIndent = normalFont.lineHeight + listPrefixString.size(withAttributes: [NSAttributedStringKey.font: normalFont]).width
-            paragraphStyle!.firstLineHeadIndent = normalFont.lineHeight
+            paragraphStyle = mutableParagraphForList(withBulletPointWidth: listPrefixString.size(withAttributes: [NSAttributedStringKey.font: normalFont]).width)
         }
 
         if paragraphStyle != nil {
