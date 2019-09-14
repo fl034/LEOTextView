@@ -309,7 +309,8 @@ open class LEOTextView: UITextView {
                         listPrefixString.append(" ")
                         listPrefixWidth = NSString(string: listPrefixString).size(withAttributes: [NSAttributedStringKey.font: normalFont]).width
                     } else {
-                        listPrefixWidth = NSString(string: "• ").size(withAttributes: [NSAttributedStringKey.font: normalFont]).width
+                        let listPrefixString = String(textString.substring(with: range).prefix(2))
+                        listPrefixWidth = NSString(string: listPrefixString).size(withAttributes: [NSAttributedStringKey.font: normalFont]).width
                     }
                     
                     let paragraphStyle = mutableParagraphForList(withBulletPointWidth: listPrefixWidth)
